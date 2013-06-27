@@ -31,7 +31,7 @@ public class ArffFileReader {
 		}
 		
 		ArffFileReader reader = new ArffFileReader(args[0]);
-		reader.preprocess();
+		reader.load();
 	}
 	
 	// constants
@@ -84,61 +84,91 @@ public class ArffFileReader {
 	}
 	
 	/**
-	 * Pre-process the file to gather metadata.
+	 * Load the data set from the stream.
 	 */
-	public void preprocess() {
-		// skip any comments at the start of the file
-		skipComments();
-		
+	public void load() {
 		// list variable to hold attribute information
 		java.util.List<Attribute> attributes = new java.util.LinkedList<Attribute>();
 		
 		// string to hold the data set name
 		String dsName = null;
 		
-		// parse declarations
+		// temporary storage for declaration tags and attribute names
 		String tag, attrName;
-		java.util.List<String> literals; 
+		
+		// temporary storage for literals for nominal attributes
+		java.util.List<String> literals;
+		
+		/*
+		 *  Skip any comments at the start of the file
+		 */
+		skipComments();
+		
+		/*
+		 * Parse the file and read the RELATION and ATTRIBUTE declarations
+		 */
 		while (scanner.hasNext(DECLARATION_PATTERN)) {
+			
+			// read the next declaration tag from the stream
 			tag = scanner.next();
+			
+			// TEMP: replace this with debug/logging
 			System.out.println(tag);
+			
+
+			/*
+			 * @RELATION
+			 */
 			if (tag.equals(RELATION_TAG)) {
+				// get the relation name
 				dsName = scanner.next();
+				// TEMP: replace this with debug/logging
 				System.out.println("Relation name: " + dsName);
 			}
+			/*
+			 * @ATTRIBUTE
+			 */
 			else if (tag.equals(ATTRIBUTE_TAG)) {
 				// get attribute name
 				attrName = scanner.next();
+				// TEMP: replace this with debug/logging
 				System.out.println("Attribute name: " + attrName);
 				
-				// create an attribute of the appropriate type
+				// NUMERIC attributes
 				if (scanner.hasNext(NUMERIC_TYPE_PATTERN)) {
+					// TEMP: replace this with debug/logging
 					System.out.println("Attribute type: " + scanner.next());
 					
 					// add a ratio attribute to the list of attributes
 					attributes.add(new jmm.ml.data.RatioAttribute(attrName));
 				}
+				// NOMINAL attributes
 				else if (scanner.hasNext(NOMINAL_TYPE_PATTERN)) {
+					// read the nominal specification from the stream
 					String nomSpec = scanner.next();
 					skipRestOfLine();
 					nomSpec = nomSpec + scanner.match().group();
+
+					// TEMP: replace this with debug/logging
 					System.out.println("Attribute type: NOMINAL " + nomSpec);
 					
 					// use nomScanner to parse nominal specification
-					Scanner nomScanner = new Scanner(nomSpec);
+					Scanner nomScan = new Scanner(nomSpec);
 					literals = new java.util.LinkedList<String>();
-					nomScanner.useDelimiter(NOM_SPEC_DELIMITER_PATTERN);
-					while (nomScanner.hasNext()) {
-						literals.add(nomScanner.next());
+					nomScan.useDelimiter(NOM_SPEC_DELIMITER_PATTERN);
+					while (nomScan.hasNext()) {
+						literals.add(nomScan.next());
 					}
 					
 					// add a nominal attribute to the list of attributes
 					attributes.add(new jmm.ml.data.NominalAttribute(attrName, literals));
 				}
+				// STRING attributes - currently unsupported
 				//else if (scanner.hasNext(STRING_TYPE_PATTERN)) {
 				//	System.out.println("Attribute type: " + scanner.next());										
 				//	attributes.add(new jmm.ml.data.StringAttribute(attrName));
 				//}
+				// DATE attributes - currently unsupported
 				//else if (scanner.hasNext(DATE_TYPE_PATTERN)) {
 				//	System.out.println("Attribute type: " + scanner.next());										
 				//}
@@ -146,20 +176,27 @@ public class ArffFileReader {
 					// ERROR
 				}
 			}
+			/*
+			 * @DATA
+			 */
 			else if (tag.equals(DATA_TAG)) {
 				
 			}
 			else {
-				
+				// ERROR
 			}
 			scanner.skip(EOL_PATTERN);
 			skipComments();
 		}
 		
-		// create data set
+		/*
+		 *  Create a new record data set with the specified name and attributes
+		 */
 		dataset = new jmm.ml.data.DefaultRecordDataSet(dsName, attributes);
 			
-		// count data lines
+		/*
+		 * Read the records from the file and add them to the data set
+		 */
 		int numSamples = 0;
 		while (scanner.hasNext()) {
 			System.out.println(scanner.next());
