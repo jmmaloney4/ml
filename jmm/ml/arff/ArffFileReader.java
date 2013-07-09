@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import jmm.ml.data.Attribute;
+import jmm.ml.data.LinkedList;
+import jmm.ml.data.NumericLinkedList;
 import jmm.ml.data.RecordDataSet;
 
 /**
@@ -88,7 +90,7 @@ public class ArffFileReader {
 	 */
 	public void load() {
 		// list variable to hold attribute information
-		java.util.List<Attribute> attributes = new java.util.LinkedList<Attribute>();
+		java.util.List<LinkedList> attributes = new java.util.LinkedList<LinkedList>();
 		
 		// string to hold the data set name
 		String dsName = null;
@@ -139,8 +141,10 @@ public class ArffFileReader {
 					// TEMP: replace this with debug/logging
 					System.out.println("Attribute type: " + scanner.next());
 					
-					// add a ratio attribute to the list of attributes
-					attributes.add(new jmm.ml.data.RatioAttribute(attrName));
+					//linked list
+					NumericLinkedList list = new NumericLinkedList();
+					attributes.add(list);
+					
 				}
 				// NOMINAL attributes
 				else if (scanner.hasNext(NOMINAL_TYPE_PATTERN)) {
@@ -160,8 +164,6 @@ public class ArffFileReader {
 						literals.add(nomScan.next());
 					}
 					
-					// add a nominal attribute to the list of attributes
-					attributes.add(new jmm.ml.data.NominalAttribute(attrName, literals));
 				}
 				// STRING attributes - currently unsupported
 				//else if (scanner.hasNext(STRING_TYPE_PATTERN)) {
@@ -174,12 +176,14 @@ public class ArffFileReader {
 				//}
 				else {
 					// ERROR
+					System.out.println("Please Make Sure That Your File Is Formatted Appropriately");
 				}
 			}
 			/*
 			 * @DATA
 			 */
 			else if (tag.equals(DATA_TAG)) {
+				
 				
 			}
 			else {
@@ -188,11 +192,7 @@ public class ArffFileReader {
 			scanner.skip(EOL_PATTERN);
 			skipComments();
 		}
-		
-		/*
-		 *  Create a new record data set with the specified name and attributes
-		 */
-		dataset = new jmm.ml.data.DefaultRecordDataSet(dsName, attributes);
+
 			
 		/*
 		 * Read the records from the file and add them to the data set
