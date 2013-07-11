@@ -14,8 +14,4 @@ public interface Attribute {
 	 */
 	public String getName();
 	
-	/**
-	 * Get the type of this attribute.
-	 */
-	public AttributeType getType();
 }

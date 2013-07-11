@@ -22,13 +22,6 @@ public class NominalAttribute extends AbstractAttribute {
 		}
 	}
 	
-	/**
-	 * Get the type of this attribute.
-	 */
-	public AttributeType getType() {
-		return AttributeType.NOMINAL;
-	}
-	
 	// private instance variables
 	private Map<String, Integer> valueMap;
 }

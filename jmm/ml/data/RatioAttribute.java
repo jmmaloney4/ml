@@ -10,10 +10,4 @@ public class RatioAttribute extends AbstractAttribute {
 		super(name);
 	}
 	
-	/**
-	 * Get the type of this attribute.
-	 */
-	public AttributeType getType() {
-		return AttributeType.RATIO;
-	}	
 }

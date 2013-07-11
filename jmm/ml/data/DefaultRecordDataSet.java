@@ -97,7 +97,8 @@ public class DefaultRecordDataSet implements RecordDataSet {
 	 */
 	@Override
 	public AttributeType getAttributeType(int num) {
-		return attributes.get(num).getType();
+		//return attributes.get(num).getType();
+		return null;
 	}
 
 }
