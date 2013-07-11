@@ -6,6 +6,8 @@ package jmm.ml.arff;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -14,6 +16,7 @@ import jmm.ml.data.Attribute;
 import jmm.ml.data.LinkedList;
 import jmm.ml.data.NumericLinkedList;
 import jmm.ml.data.RecordDataSet;
+import jmm.ui.ArffReaderWindowManager;
 
 /**
  * A reader for parsing text streams in the Attribute-Relation File Format (ARFF).
@@ -25,13 +28,15 @@ import jmm.ml.data.RecordDataSet;
  */
 public class ArffFileReader {
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static File file;
+	
+	public static void main(String[] args) throws IOException {
 		
 		if (args.length < 1) {
 			System.out.println("Usage: java "+ ArffFileReader.class.getName() + " <filename>");
 			System.exit(0);
 		}
-		
+		file = new File(args[0]);
 		ArffFileReader reader = new ArffFileReader(args[0]);
 		reader.load();
 	}
@@ -40,6 +45,7 @@ public class ArffFileReader {
 	private final static Pattern COMMENT_PATTERN = Pattern.compile("%.*[\r\n|[\r\n]]");
 	private final static Pattern EOL_PATTERN = Pattern.compile(".*[\r\n|[\r\n]]");
 	private final static Pattern DECLARATION_PATTERN = Pattern.compile("@.*");
+	private final static Pattern COMMA_PATTERN = Pattern.compile(",|, ");
 	public final static String RELATION_TAG = "@RELATION";
 	public final static String ATTRIBUTE_TAG = "@ATTRIBUTE";
 	public final static String DATA_TAG = "@DATA";
@@ -52,6 +58,9 @@ public class ArffFileReader {
 	private final static Pattern STRING_TYPE_PATTERN = Pattern.compile(STRING_TYPE);
 	private final static Pattern NOMINAL_TYPE_PATTERN = Pattern.compile(NOMINAL_TYPE);
 	private final static Pattern NOM_SPEC_DELIMITER_PATTERN = Pattern.compile("\\{\\s*|\\s*,\\s*|\\s*\\}\\s*");
+	private static ArffReaderWindowManager WManager = new ArffReaderWindowManager(); 
+	public static float[] BigArray;
+	
 	
 	// private variables
 	private Scanner scanner;
@@ -87,8 +96,13 @@ public class ArffFileReader {
 	
 	/**
 	 * Load the data set from the stream.
+	 * @throws IOException 
 	 */
-	public void load() {
+	public void load() throws IOException {
+		
+		//start the UI
+		WManager.CreateWindow();
+		
 		// list variable to hold attribute information
 		java.util.List<LinkedList> attributes = new java.util.LinkedList<LinkedList>();
 		
@@ -149,8 +163,10 @@ public class ArffFileReader {
 				// NOMINAL attributes
 				else if (scanner.hasNext(NOMINAL_TYPE_PATTERN)) {
 					// read the nominal specification from the stream
+					scanner.reset();
 					String nomSpec = scanner.next();
 					skipRestOfLine();
+					System.out.println(scanner.match().groupCount());
 					nomSpec = nomSpec + scanner.match().group();
 
 					// TEMP: replace this with debug/logging
@@ -183,12 +199,20 @@ public class ArffFileReader {
 			 * @DATA
 			 */
 			else if (tag.equals(DATA_TAG)) {
+				BufferedReader BReader = new BufferedReader(new FileReader(file));
+				
+				int count = 0;
+				while (BReader.readLine() != null) {
+					count++;
+				}
+				BigArray = new float[(count * attributes.size())];
 				
 				
 			}
 			else {
 				// ERROR
 			}
+
 			scanner.skip(EOL_PATTERN);
 			skipComments();
 		}
@@ -203,16 +227,17 @@ public class ArffFileReader {
 			numSamples++;
 		}
 		
-		System.out.println("Num attributes: " + dataset.getAttributeCount());
+		//System.out.println("Num attributes: " + dataset.getAttributeCount());
 		System.out.println("Num samples:    " + numSamples);
 		System.out.println(dataset);
+		System.exit(0);
 	}
 	
 	/**
 	 * Skip any comments that appear next in the input stream.
 	 */
 	private void skipComments() {
-		int c = 0;
+		int c = 0; 
 		try {
 			while (true) {
 				scanner.skip(COMMENT_PATTERN);

@@ -17,8 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 
-public class WindowManager {
+public class RandomFileWindowManager {
 	
 	static int l;
 	BorderLayout bLay = new BorderLayout();
@@ -38,6 +39,7 @@ public class WindowManager {
 	JButton CancelButton = new JButton("Cancel");
 	Dimension PrefferedSizeCancelButton = new Dimension(100, 20);
 	ButtonListner bl = new ButtonListner();
+	JTextField TextField = new JTextField();
 	
 	public class ButtonListner extends AbstractAction {
 
@@ -48,7 +50,7 @@ public class WindowManager {
 		
 	}
 	
-	public WindowManager(int m) {
+	public RandomFileWindowManager(int m) {
 		l = m;
 		pBar = new JProgressBar(1, l);
 		
@@ -58,7 +60,7 @@ public class WindowManager {
 	
 	
 	public void CreateWindow() {
-		frame.setBounds(800, 500, 499, 150);
+		frame.setBounds(800, 500, 599, 150);
 		frame.setVisible(true);
 		frame.setContentPane(cPane);
 		pBar.setVisible(true);
@@ -68,7 +70,7 @@ public class WindowManager {
 		cPane.add(RHStrut, BorderLayout.EAST);
 		cPane.add(label, BorderLayout.NORTH);
 		cPane.setVisible(true);
-		frame.setBounds(800, 500, 500, 150);
+		frame.setBounds(800, 500, 600, 150);
 		cPane.add(nPane, BorderLayout.NORTH);
 		nPane.add(label, BorderLayout.CENTER);
 		nPane.add(NTVStrut, BorderLayout.NORTH);
@@ -81,6 +83,9 @@ public class WindowManager {
 		CancelButton.addActionListener(bl);
 		CancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		CancelButton.setToolTipText("Cancels The Program, Leaving Written Records In The File");
+		//cPane.add(TextField);
+		//TextField.setVisible(true);
+		//TextField.setSize(300, 20);
 	}
 	
 	public void setProgress(int val) throws InterruptedException {
