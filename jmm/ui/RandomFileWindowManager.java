@@ -39,7 +39,6 @@ public class RandomFileWindowManager {
 	JButton CancelButton = new JButton("Cancel");
 	Dimension PrefferedSizeCancelButton = new Dimension(100, 20);
 	ButtonListner bl = new ButtonListner();
-	JTextField TextField = new JTextField();
 	
 	public class ButtonListner extends AbstractAction {
 
@@ -47,17 +46,12 @@ public class RandomFileWindowManager {
 		public void actionPerformed(ActionEvent arg0) {
 			System.exit(1);
 		}
-		
 	}
 	
 	public RandomFileWindowManager(int m) {
 		l = m;
 		pBar = new JProgressBar(1, l);
-		
 	}
-	
-	
-	
 	
 	public void CreateWindow() {
 		frame.setBounds(800, 500, 599, 150);
@@ -83,9 +77,6 @@ public class RandomFileWindowManager {
 		CancelButton.addActionListener(bl);
 		CancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		CancelButton.setToolTipText("Cancels The Program, Leaving Written Records In The File");
-		//cPane.add(TextField);
-		//TextField.setVisible(true);
-		//TextField.setSize(300, 20);
 	}
 	
 	public void setProgress(int val) throws InterruptedException {
@@ -125,9 +116,5 @@ public class RandomFileWindowManager {
 				pBar.setValue(i);
 			}
 		}	
-	}
-	
-	public JLabel getLabel() {
-		return label;
 	}
 }
