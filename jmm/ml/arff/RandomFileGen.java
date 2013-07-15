@@ -72,13 +72,14 @@ public abstract class RandomFileGen {
 			w = "Standard Output";
 		}
 		else  if (args.length == 1) {
+			WManager = new RandomFileWindowManager((fileSize));
 			JLabel label = WManager.getLabel();
 			File file = new File(args[0]);
 			writer = new BufferedWriter(new PrintWriter(file));
 			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 			Thread.sleep(300);
 			w = "File, " + file.getAbsolutePath();
-			WManager = new RandomFileWindowManager((fileSize));
+			
 		}
 		else if (args.length == 2) {
 			File file = new File(args[0]);

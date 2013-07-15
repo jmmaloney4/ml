@@ -76,7 +76,7 @@ public class RandomFileWindowManager {
 		CancelButton.setBounds(CancelButton.getX(), CancelButton.getY() + 40, 100, 20);
 		CancelButton.addActionListener(bl);
 		CancelButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		CancelButton.setToolTipText("Cancels The Program, Leaving Written Records In The File");
+		CancelButton.setToolTipText("Cancels The Program, Leaving Written Records Where They Are");
 	}
 	
 	public void setProgress(int val) throws InterruptedException {
@@ -116,5 +116,9 @@ public class RandomFileWindowManager {
 				pBar.setValue(i);
 			}
 		}	
+	}
+	
+	public JLabel getLabel() {
+		return label;
 	}
 }

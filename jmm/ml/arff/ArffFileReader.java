@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import jmm.ml.data.Attribute;
+import jmm.ml.data.Data;
 import jmm.ml.data.LinkedList;
 import jmm.ml.data.NumericLinkedList;
 import jmm.ml.data.RecordDataSet;
@@ -59,13 +60,12 @@ public class ArffFileReader {
 	private final static Pattern NOMINAL_TYPE_PATTERN = Pattern.compile(NOMINAL_TYPE);
 	private final static Pattern NOM_SPEC_DELIMITER_PATTERN = Pattern.compile("\\{\\s*|\\s*,\\s*|\\s*\\}\\s*");
 	private static ArffReaderWindowManager WManager = new ArffReaderWindowManager(); 
-	public static float[] BigArray;
 	private int c;
+	private static Data dataset;
 	
 	
 	// private variables
 	private Scanner scanner;
-	private RecordDataSet dataset;
 	
 	/**
 	 * Construct an ARFF file reader using the specified file path.
@@ -103,6 +103,7 @@ public class ArffFileReader {
 		
 		// count the records in the data set
 		c = countRecords();
+		
 		
 		//start the UI
 		WManager.CreateWindow();
@@ -195,30 +196,29 @@ public class ArffFileReader {
 			 * @DATA
 			 */
 			else if (tag.equals(DATA_TAG)) {
+				dataset = new Data(c, attributes);
 				// skip anything that is on the same line as the @DATA tag
 				scanner.nextLine();
 				
 				// TODO: replace this with debug/logging 
 				System.out.println("Parse " + c + " data records");
 				
-				BigArray = new float[(c * attributes)];
 				scanner.useDelimiter(COMMA_PATTERN);
 				int w = 0;
 				while (scanner.hasNext()) {
 					//String d = scanner.next();
 					float d = scanner.nextFloat();
 					//System.out.println("Token: " + d);
-					BigArray[w] = d;
-					System.out.println(BigArray[w]);
+					dataset.add(w, d);
+					System.out.println(dataset.get(w));
 					w++;
 				}
-				
+				System.out.println(w + ", " + dataset.getLength());
 			}
 			else {
 				// ERROR
 			}
 
-			scanner.nextLine();
 			skipComments();
 		}
 			
