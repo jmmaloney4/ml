@@ -79,7 +79,7 @@ public abstract class RandomFileGen {
 			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 			Thread.sleep(300);
 			w = "File, " + file.getAbsolutePath();
-			
+
 		}
 		else if (args.length == 2) {
 			File file = new File(args[0]);
@@ -97,60 +97,59 @@ public abstract class RandomFileGen {
 			WManager = new RandomFileWindowManager((fileSize));
 		}
 
-		WManager.CreateWindow();
-		Integer i = 0;
-		JLabel label = WManager.getLabel();
-		writer.write("@RELATION RandomFileGen \n\n\n");
-		label.setText("Writing @RELATION tag...");
-		for (int numAttr2 = numAttr; numAttr2 > 0; numAttr2--) {
-			int AttrType = rGen.nextInt(2);
-			i++;
-			label.setText("Writing Attributes...");
-			if (AttrType == 0) {
-				writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + " NUMERIC\n");
-				attrs.add(new Attribute(0));
-				label.setText("Wrote Numeric Attribute...");
-			}
-			else if (AttrType == 1) {
-				int numNomAttrs = (rGen.nextInt(10) + 5);
-				String str = " {1";
-				for (int k = 1; k < numNomAttrs; k++) {
-					Integer n = k + 1;
-					str = str + (", " + n.toString());
+
+		if (fileSize > 10000) {
+			WManager.CreateWindow();
+			Integer i = 0;
+			JLabel label = WManager.getLabel();
+			writer.write("@RELATION RandomFileGen \n\n\n");
+			label.setText("Writing @RELATION tag...");
+			for (int numAttr2 = numAttr; numAttr2 > 0; numAttr2--) {
+				int AttrType = rGen.nextInt(2);
+				i++;
+				label.setText("Writing Attributes...");
+				if (AttrType == 0) {
+					writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + " NUMERIC\n");
+					attrs.add(new Attribute(0));
+					label.setText("Wrote Numeric Attribute...");
 				}
-				writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + str + "}\n");
-				label.setText("Wrote Nominal Attribute...");
-				Attribute a = new Attribute(1);
-				a.setNom(numNomAttrs);
-				attrs.add(a);
+				else if (AttrType == 1) {
+					int numNomAttrs = (rGen.nextInt(10) + 5);
+					String str = " {1";
+					for (int k = 1; k < numNomAttrs; k++) {
+						Integer n = k + 1;
+						str = str + (", " + n.toString());
+					}
+					writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + str + "}\n");
+					label.setText("Wrote Nominal Attribute...");
+					Attribute a = new Attribute(1);
+					a.setNom(numNomAttrs);
+					attrs.add(a);
+				}
+
 			}
-
+			Thread.sleep(500);
+			writer.write("\n\n@DATA\n");
+			for (Integer o = 0; o < fileSize; o++) {
+				String h = RandomFileGen.genRow();
+				label.setText("Writing Record Number " + o.toString() + ", At: " + ((Float)(((float)o / (float)fileSize) * 100)).toString() + " %");
+				writer.write(h);
+				WManager.pBar.setValue((int) o);
+			}
+			SysTimeEnd = (double)System.currentTimeMillis();
+			label.setText("Flushing Writer");
+			Thread.sleep(500);
+			label.setText("Writing To " + w);
+			Thread.sleep(500);
+			Thread.sleep(500);
+			Double u = (SysTimeEnd - SysTimeStart) / 1000;
+			label.setText(u.toString());
+			Thread.sleep(1000);
+			System.exit(0);
 		}
-		Thread.sleep(500);
-		writer.write("\n\n@DATA\n");
-		for (Integer o = 0; o < fileSize; o++) {
-			String h = RandomFileGen.genRow();
-			label.setText("Writing Record Number " + o.toString() + ", At: " + ((Float)(((float)o / (float)fileSize) * 100)).toString() + " %");
-			writer.write(h);
-			WManager.pBar.setValue((int) o);
+		else {
+			System.err.println("Error: FileSize Not Large Enough");
 		}
-		label.setText("Flushing Writer");
-		Thread.sleep(500);
-
-		label.setText("Writing To " + w);
-		Thread.sleep(500);
-		WManager.addProgress(0);
-		Thread.sleep(500);
-
-
-		SysTimeEnd = (double)System.currentTimeMillis();
-		Double u = (SysTimeEnd - SysTimeStart) / 1000;
-		label.setText(u.toString());
-		Thread.sleep(1000);
-		System.err.println("\n\nWrote " + ((Integer)fileSize).toString() + " Lines");
-		System.err.println("In " + u.toString() + "Seconds");
-		System.err.println("To " + w);
-		System.exit(0);
 
 	}
 
