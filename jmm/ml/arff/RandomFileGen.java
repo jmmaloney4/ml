@@ -2,12 +2,12 @@ package jmm.ml.arff;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.swing.JLabel;
 
@@ -25,8 +25,9 @@ public abstract class RandomFileGen {
 	static Double SysTimeEnd;
 	static Writer writer;
 	static String w;
-	public static final String USAGE_STATEMENT = "Usage: ArffFileGen <File Name> <Number Of Records (Optional)> <Num Of Attributes (Optional)>";
+	public static final String USAGE_STATEMENT = "Usage: arffgen [-h] [-a num-of-attrs] [-l num-of-lines] <File Name> <Number Of Records (Optional)> <Num Of Attributes (Optional)>";
 	public static int numAttr = (rGen.nextInt(20) + 15);
+	private static File file;
 
 	public static class Attribute {
 		int Type;
@@ -67,19 +68,17 @@ public abstract class RandomFileGen {
 			WManager = new RandomFileWindowManager((fileSize));
 			JLabel label = WManager.getLabel();
 			writer = new BufferedWriter(new PrintWriter(System.out));
-			label.setText("Detected File, Writing To Standard Output");
+			label.setText("Writing To Standard Output");
 			Thread.sleep(300);
 			w = "Standard Output";
 		}
 		else  if (args.length == 1) {
 			WManager = new RandomFileWindowManager((fileSize));
 			JLabel label = WManager.getLabel();
-			File file = new File(args[0]);
 			writer = new BufferedWriter(new PrintWriter(file));
 			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 			Thread.sleep(300);
 			w = "File, " + file.getAbsolutePath();
-
 		}
 		else if (args.length == 2) {
 			File file = new File(args[0]);
@@ -87,6 +86,8 @@ public abstract class RandomFileGen {
 			fileSize = Integer.parseInt(args[1]);
 			w = "File, " + file.getAbsolutePath();
 			WManager = new RandomFileWindowManager((fileSize));
+			JLabel label = WManager.getLabel();
+			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 		}
 		else if (args.length == 3) {
 			File file = new File(args[0]);
@@ -95,6 +96,8 @@ public abstract class RandomFileGen {
 			numAttr = Integer.parseInt(args[2]);
 			w = "File, " + file.getAbsolutePath();
 			WManager = new RandomFileWindowManager((fileSize));
+			JLabel label = WManager.getLabel();
+			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 		}
 
 
@@ -181,6 +184,40 @@ public abstract class RandomFileGen {
 		}
 		row = row + "\n";
 		return row;
+	}
+
+	public void parseOptsAndArgs(String[] inp) {
+		int c = 0;
+		while (c <= inp.length) {
+			String se = inp[c];
+			if (se.contains("h")) {
+				System.err.println(USAGE_STATEMENT);
+				System.err.println("ArffFileGen Help:" +
+						"\n\nOptions:" +
+						"\n-h = Prints this help" +
+						"\n-a [num-of-attributes] = specify the number of attributes" +
+						"\n-r [num-of-records] = srecify the number of records");
+				System.exit(0);
+			}
+			if (se.startsWith("-")) {
+				if (se.charAt(1) == 'a') {
+					c++;
+					se = inp[c];
+					int a = Integer.parseInt(se);
+					numAttr = a;
+				}
+				else if (se.charAt(1) == 'r') {
+					c++;
+					se = inp[c];
+					int a = Integer.parseInt(se);
+					fileSize = a;
+				}
+			}
+			else {
+				file = new File(se);
+			}
+			c++;
+		}
 	}
 }
 
