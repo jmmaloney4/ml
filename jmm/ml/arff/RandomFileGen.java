@@ -27,7 +27,7 @@ public abstract class RandomFileGen {
 	static Double SysTimeEnd;
 	static Writer writer;
 	static String w;
-	public static final String USAGE_STATEMENT = "Usage: arffgen [-h] [-a num-of-attrs] [-l num-of-lines] <File Name> <Number Of Records (Optional)> <Num Of Attributes (Optional)>";
+	public static final String USAGE_STATEMENT = "Usage: arffgen [-h] [-a num-of-attrs] [-r num-of-records] <File Name> <Number Of Records (Optional)> <Num Of Attributes (Optional)>";
 	public static int numAttr = (rGen.nextInt(20) + 15);
 	private static File file;
 
@@ -64,7 +64,7 @@ public abstract class RandomFileGen {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		SysTimeStart = (double)(System.currentTimeMillis());
 
-		RandomFileGen.parseOptsAndArgs(args, w);
+		RandomFileGen.parseOptsAndArgs(args);
 		WManager = new RandomFileWindowManager(fileSize); 
 
 		/*
@@ -146,9 +146,6 @@ public abstract class RandomFileGen {
 			SysTimeEnd = (double)System.currentTimeMillis();
 			label.setText("Flushing Writer");
 			Thread.sleep(500);
-			label.setText("Writing To " + w);
-			Thread.sleep(500);
-			Thread.sleep(500);
 			Double u = (SysTimeEnd - SysTimeStart) / 1000;
 			label.setText(u.toString());
 			Thread.sleep(1000);
@@ -190,16 +187,17 @@ public abstract class RandomFileGen {
 		return row;
 	}
 
-	public static void parseOptsAndArgs(String[] inp, String l) throws FileNotFoundException {
-
+	public static void parseOptsAndArgs(String[] inp) throws FileNotFoundException {
+		boolean wr = false;
 		if (inp.length == 0) {
 			w = "Standard Output";
 			writer = new BufferedWriter(new PrintWriter(System.out));
+			wr = true;
 			return;
 		}
 		else {
 			int c = 0;
-			while (c <= inp.length) {
+			while (c < inp.length) {
 				String se = inp[c];
 				if (se.contains("h")) {
 					System.err.println(USAGE_STATEMENT);
@@ -227,11 +225,18 @@ public abstract class RandomFileGen {
 				else {
 					System.out.println(se);
 					file = new File(se);
+					writer = new BufferedWriter(new PrintWriter(file));
+					wr = true;
+					w = file.getAbsolutePath();
 				}
 				c++;
 			}
 		}
-		writer = new BufferedWriter(new PrintWriter(file));
+		w = "Standard Output";
+		if (wr = false) {
+			writer = new BufferedWriter(new PrintWriter(System.out));
+			wr = true;
+		}
 	}
 }
 

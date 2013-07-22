@@ -29,11 +29,11 @@ import jmm.ui.ArffReaderWindowManager;
  *
  */
 public class ArffFileReader {
-	
+
 	public static File file;
-	
+
 	public static void main(String[] args) throws IOException {
-		
+
 		if (args.length < 1) {
 			System.out.println("Usage: java "+ ArffFileReader.class.getName() + " <filename>");
 			System.exit(0);
@@ -42,7 +42,7 @@ public class ArffFileReader {
 		ArffFileReader reader = new ArffFileReader(args[0]);
 		reader.load();
 	}
-	
+
 	// constants
 	private final static Pattern COMMENT_PATTERN = Pattern.compile("%.*[\r\n|[\r\n]]");
 	private final static Pattern DECLARATION_PATTERN = Pattern.compile("@.*");
@@ -59,14 +59,14 @@ public class ArffFileReader {
 	//private final static Pattern STRING_TYPE_PATTERN = Pattern.compile(STRING_TYPE);
 	private final static Pattern NOMINAL_TYPE_PATTERN = Pattern.compile(NOMINAL_TYPE);
 	private final static Pattern NOM_SPEC_DELIMITER_PATTERN = Pattern.compile("\\{\\s*|\\s*,\\s*|\\s*\\}\\s*");
-	private static ArffReaderWindowManager WManager = new ArffReaderWindowManager(); 
+	private static ArffReaderWindowManager WManager;
 	private int c;
 	private static Data dataset;
-	
-	
+
+
 	// private variables
 	private Scanner scanner;
-	
+
 	/**
 	 * Construct an ARFF file reader using the specified file path.
 	 * 
@@ -92,55 +92,55 @@ public class ArffFileReader {
 	 */
 	public ArffFileReader(Reader reader) {
 		scanner = new Scanner(reader);
-		
+
 	}
-	
+
 	/**
 	 * Load the data set from the stream.
 	 * @throws IOException 
 	 */
 	public void load() throws IOException {
-		
+
 		// count the records in the data set
 		c = countRecords();
-		
-		
+		WManager = new ArffReaderWindowManager(c); 
+
 		//start the UI
 		WManager.CreateWindow();
-		
+
 		// list variable to hold attribute information
 		int attributes = 0;
-		
+
 		// string to hold the data set name
 		String dsName = null;
-		
+
 		// temporary storage for declaration tags and attribute names
 		String tag, attrName;
-		
+
 		// temporary storage for literals for nominal attributes
 		List<String> literals;
-		
+
 		// temporary storage to hold nominal specification to be parsed
 		String nomSpec;
-		
+
 		/*
 		 *  Skip any comments at the start of the file
 		 */
 		skipComments();
-		
+
 		long time1 = System.currentTimeMillis();
-		
+
 		/*
 		 * Parse the file and read the RELATION and ATTRIBUTE declarations
 		 */
 		while (scanner.hasNext(DECLARATION_PATTERN)) {
-			
+
 			// read the next declaration tag from the stream
 			tag = scanner.next(DECLARATION_PATTERN);
-			
+
 			// TODO: replace this with debug/logging
 			System.out.println(tag);
-			
+
 			/*
 			 * @RELATION
 			 */
@@ -161,15 +161,15 @@ public class ArffFileReader {
 				System.out.println("Attribute name: " + attrName);
 				// increment the number of attributes
 				attributes++;
-				
+
 				// NUMERIC attributes
 				if (scanner.hasNext(NUMERIC_TYPE_PATTERN)) {
 					// TODO: replace this with debug/logging
 					System.out.println("Attribute type: " + scanner.next());
-					
+
 					// TODO: create a numeric attribute
-					
-					
+
+
 				}
 				// NOMINAL attributes
 				else if ((nomSpec = scanner.findInLine(NOMINAL_TYPE_PATTERN)) != null) {
@@ -196,24 +196,25 @@ public class ArffFileReader {
 			 * @DATA
 			 */
 			else if (tag.equals(DATA_TAG)) {
+				WManager.setLabel("Reading Data...");
 				dataset = new Data(c, attributes);
 				// skip anything that is on the same line as the @DATA tag
 				scanner.nextLine();
-				
+
 				// TODO: replace this with debug/logging 
 				System.out.println("Parse " + c + " data records");
-				
+
 				scanner.useDelimiter(COMMA_PATTERN);
-				int w = 0;
+				int a = 1;
 				while (scanner.hasNext()) {
-					//String d = scanner.next();
+					WManager.setLabel("Reading Arrtibute Number " + ((Integer)a).toString());
 					float d = scanner.nextFloat();
-					//System.out.println("Token: " + d);
-					dataset.add(w, d);
-					System.out.println(dataset.get(w));
-					w++;
+					dataset.add(a, d);
+					System.out.println(dataset.get(a));
+					a++;
+					WManager.pBar.setValue(a / attributes);
 				}
-				System.out.println(w + ", " + dataset.getLength());
+				System.out.println(a + ", " + dataset.getLength());
 			}
 			else {
 				// ERROR
@@ -221,12 +222,12 @@ public class ArffFileReader {
 
 			skipComments();
 		}
-			
+
 		//System.out.println("Num attributes: " + dataset.getAttributeCount());
 		System.exit(0);
 
 	}
-	
+
 	/**
 	 * Skip any comments that appear next in the input stream.
 	 */
@@ -245,7 +246,7 @@ public class ArffFileReader {
 			System.err.println("Skipped " + c + " comments");
 		}
 	}
-	
+
 	public int countRecords() throws FileNotFoundException, IOException {
 		BufferedReader BReader = new BufferedReader(new FileReader(file));
 		int count = 0;
@@ -259,7 +260,7 @@ public class ArffFileReader {
 		System.out.println(count);
 		return count;
 	}
-	
+
 	/**
 	 * Parse the specification for a nominal attribute.
 	 */
@@ -272,7 +273,11 @@ public class ArffFileReader {
 			literals.add(nomScan.next());
 		}
 		nomScan.close();
-		
+
 		return literals;
+	}
+	
+	public Data getBigArrayObj() {
+		return dataset;
 	}
 }
