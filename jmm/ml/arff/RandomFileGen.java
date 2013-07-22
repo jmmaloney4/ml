@@ -1,7 +1,9 @@
 package jmm.ml.arff;
 
+import java.awt.Label;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -61,10 +63,12 @@ public abstract class RandomFileGen {
 	 */
 	public static void main(String[] args) throws InterruptedException, IOException {
 		SysTimeStart = (double)(System.currentTimeMillis());
-		if (args.length > 3) {
-			System.out.println(USAGE_STATEMENT);
-		}
-		else if (args.length == 0) {
+
+		RandomFileGen.parseOptsAndArgs(args, w);
+		WManager = new RandomFileWindowManager(fileSize); 
+
+		/*
+		if (args.length == 0) {
 			WManager = new RandomFileWindowManager((fileSize));
 			JLabel label = WManager.getLabel();
 			writer = new BufferedWriter(new PrintWriter(System.out));
@@ -99,7 +103,7 @@ public abstract class RandomFileGen {
 			JLabel label = WManager.getLabel();
 			label.setText("Detected File, Writing To " + file.getAbsolutePath());
 		}
-
+		 */
 
 		if (fileSize > 10000) {
 			WManager.CreateWindow();
@@ -186,38 +190,48 @@ public abstract class RandomFileGen {
 		return row;
 	}
 
-	public void parseOptsAndArgs(String[] inp) {
-		int c = 0;
-		while (c <= inp.length) {
-			String se = inp[c];
-			if (se.contains("h")) {
-				System.err.println(USAGE_STATEMENT);
-				System.err.println("ArffFileGen Help:" +
-						"\n\nOptions:" +
-						"\n-h = Prints this help" +
-						"\n-a [num-of-attributes] = specify the number of attributes" +
-						"\n-r [num-of-records] = srecify the number of records");
-				System.exit(0);
-			}
-			if (se.startsWith("-")) {
-				if (se.charAt(1) == 'a') {
-					c++;
-					se = inp[c];
-					int a = Integer.parseInt(se);
-					numAttr = a;
-				}
-				else if (se.charAt(1) == 'r') {
-					c++;
-					se = inp[c];
-					int a = Integer.parseInt(se);
-					fileSize = a;
-				}
-			}
-			else {
-				file = new File(se);
-			}
-			c++;
+	public static void parseOptsAndArgs(String[] inp, String l) throws FileNotFoundException {
+
+		if (inp.length == 0) {
+			w = "Standard Output";
+			writer = new BufferedWriter(new PrintWriter(System.out));
+			return;
 		}
+		else {
+			int c = 0;
+			while (c <= inp.length) {
+				String se = inp[c];
+				if (se.contains("h")) {
+					System.err.println(USAGE_STATEMENT);
+					System.err.println("ArffFileGen Help:" +
+							"\n\nOptions:" +
+							"\n-h = Prints this help" +
+							"\n-a [num-of-attributes] = specify the number of attributes" +
+							"\n-r [num-of-records] = srecify the number of records");
+					System.exit(0);
+				}
+				if (se.startsWith("-")) {
+					if (se.contains("a")) {
+						c++;
+						se = inp[c];
+						int a = Integer.parseInt(se);
+						numAttr = a;
+					}
+					else if (se.contains("r")) {
+						c++;
+						se = inp[c];
+						int a = Integer.parseInt(se);
+						fileSize = a;
+					}
+				}
+				else {
+					System.out.println(se);
+					file = new File(se);
+				}
+				c++;
+			}
+		}
+		writer = new BufferedWriter(new PrintWriter(file));
 	}
 }
 

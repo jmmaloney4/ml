@@ -54,7 +54,9 @@ public class RandomFileWindowManager {
 	}
 	
 	public void CreateWindow() {
-		frame.setBounds(800, 500, 599, 150);
+		int sh = this.GetScreenWorkingHeight();
+		int sw = RandomFileWindowManager.GetScreenWorkingWidth();
+		frame.setBounds((sw / 2) - 300, (sh / 2) - 75, 599, 150);
 		frame.setVisible(true);
 		frame.setContentPane(cPane);
 		pBar.setVisible(true);
@@ -64,7 +66,7 @@ public class RandomFileWindowManager {
 		cPane.add(RHStrut, BorderLayout.EAST);
 		cPane.add(label, BorderLayout.NORTH);
 		cPane.setVisible(true);
-		frame.setBounds(800, 500, 600, 150);
+		frame.setBounds((sw / 2) - 300, (sh / 2) - 75, 600, 150);
 		cPane.add(nPane, BorderLayout.NORTH);
 		nPane.add(label, BorderLayout.CENTER);
 		nPane.add(NTVStrut, BorderLayout.NORTH);
@@ -120,5 +122,13 @@ public class RandomFileWindowManager {
 	
 	public JLabel getLabel() {
 		return label;
+	}
+	
+	public static int GetScreenWorkingWidth() {
+	    return java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width;
+	}
+
+	public static int GetScreenWorkingHeight() {
+	    return java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().height;
 	}
 }

@@ -3,7 +3,10 @@ package jmm.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 
 import javax.swing.Box;
 import javax.swing.JFrame;
@@ -29,8 +32,6 @@ public class ArffReaderWindowManager {
 	}
 	
 	public void CreateWindow() {
-		int sh = Toolkit.getDefaultToolkit().getScreenSize().height;
-		int sw = Toolkit.getDefaultToolkit().getScreenSize().width;
 		frame.setBounds(600, 400, 400, 299);
 		frame.setVisible(true);
 		frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -86,5 +87,4 @@ public class ArffReaderWindowManager {
 			}
 		}	
 	}
-	
 }
