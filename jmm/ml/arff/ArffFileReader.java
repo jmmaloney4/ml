@@ -62,7 +62,12 @@ public class ArffFileReader {
 	private static ArffReaderWindowManager WManager;
 	private int c;
 	private static Data dataset;
+	public static ArffFileReader fileReader;
+	int attributes = 0;
 
+	public void initInstance() throws FileNotFoundException {
+		fileReader = new ArffFileReader(file);
+	}
 
 	// private variables
 	private Scanner scanner;
@@ -99,17 +104,16 @@ public class ArffFileReader {
 	 * Load the data set from the stream.
 	 * @throws IOException 
 	 */
-	public void load() throws IOException {
-
+	public Data load() throws IOException {
+		
+		this.initInstance();
+		
 		// count the records in the data set
 		c = countRecords();
 		WManager = new ArffReaderWindowManager(c); 
 
 		//start the UI
 		WManager.CreateWindow();
-
-		// list variable to hold attribute information
-		int attributes = 0;
 
 		// string to hold the data set name
 		String dsName = null;
@@ -176,7 +180,7 @@ public class ArffFileReader {
 					// TODO: replace this with debug/logging
 					System.out.println("Attribute type: NOMINAL " + nomSpec);
 					literals = parseNominalLiterals(nomSpec);
-					// TODO: create a nominal attribute
+					// TODO: create a nominal attribute	
 				}
 				// STRING attributes - currently unsupported
 				//else if (scanner.hasNext(STRING_TYPE_PATTERN)) {
@@ -205,7 +209,7 @@ public class ArffFileReader {
 				System.out.println("Parse " + c + " data records");
 
 				scanner.useDelimiter(COMMA_PATTERN);
-				int a = 1;
+				int a = 0;
 				while (scanner.hasNext()) {
 					WManager.setLabel("Reading Arrtibute Number " + ((Integer)a).toString());
 					float d = scanner.nextFloat();
@@ -222,9 +226,8 @@ public class ArffFileReader {
 
 			skipComments();
 		}
-
-		//System.out.println("Num attributes: " + dataset.getAttributeCount());
-		System.exit(0);
+		
+		return dataset;
 
 	}
 
@@ -246,7 +249,14 @@ public class ArffFileReader {
 			System.err.println("Skipped " + c + " comments");
 		}
 	}
-
+	
+	/**
+	 * counts the number of records in the file
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	
 	public int countRecords() throws FileNotFoundException, IOException {
 		BufferedReader BReader = new BufferedReader(new FileReader(file));
 		int count = 0;
@@ -277,7 +287,7 @@ public class ArffFileReader {
 		return literals;
 	}
 	
-	public Data getBigArrayObj() {
-		return dataset;
+	public int getNumAttrs() {
+		return attributes;
 	}
 }

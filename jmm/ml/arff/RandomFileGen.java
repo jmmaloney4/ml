@@ -27,9 +27,10 @@ public abstract class RandomFileGen {
 	static Double SysTimeEnd;
 	static Writer writer;
 	static String w;
-	public static final String USAGE_STATEMENT = "Usage: arffgen [-h] [-a num-of-attrs] [-r num-of-records] <File Name> <Number Of Records (Optional)> <Num Of Attributes (Optional)>";
+	public static final String USAGE_STATEMENT = "Usage: arffgen [-h] [-a num-of-attrs > 3] [-r num-of-records(>10000)] <File Name>";
 	public static int numAttr = (rGen.nextInt(20) + 15);
 	private static File file;
+	private static boolean Error = false;
 
 	public static class Attribute {
 		int Type;
@@ -106,53 +107,65 @@ public abstract class RandomFileGen {
 		 */
 
 		if (fileSize > 10000) {
-			WManager.CreateWindow();
-			Integer i = 0;
-			JLabel label = WManager.getLabel();
-			writer.write("@RELATION RandomFileGen \n\n\n");
-			label.setText("Writing @RELATION tag...");
-			for (int numAttr2 = numAttr; numAttr2 > 0; numAttr2--) {
-				int AttrType = rGen.nextInt(2);
-				i++;
-				label.setText("Writing Attributes...");
-				if (AttrType == 0) {
-					writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + " NUMERIC\n");
-					attrs.add(new Attribute(0));
-					label.setText("Wrote Numeric Attribute...");
-				}
-				else if (AttrType == 1) {
-					int numNomAttrs = (rGen.nextInt(10) + 5);
-					String str = " {1";
-					for (int k = 1; k < numNomAttrs; k++) {
-						Integer n = k + 1;
-						str = str + (", " + n.toString());
-					}
-					writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + str + "}\n");
-					label.setText("Wrote Nominal Attribute...");
-					Attribute a = new Attribute(1);
-					a.setNom(numNomAttrs);
-					attrs.add(a);
-				}
 
+			if (numAttr > 3) {
+				WManager.CreateWindow();
+				Integer i = 0;
+				JLabel label = WManager.getLabel();
+				writer.write("@RELATION RandomFileGen \n\n\n");
+				label.setText("Writing @RELATION tag...");
+				for (int numAttr2 = numAttr; numAttr2 > 0; numAttr2--) {
+					int AttrType = rGen.nextInt(2);
+					i++;
+					label.setText("Writing Attributes...");
+					if (AttrType == 0) {
+						writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + " NUMERIC\n");
+						attrs.add(new Attribute(0));
+						label.setText("Wrote Numeric Attribute...");
+					}
+					else if (AttrType == 1) {
+						int numNomAttrs = (rGen.nextInt(10) + 5);
+						String str = " {1";
+						for (int k = 1; k < numNomAttrs; k++) {
+							Integer n = k + 1;
+							str = str + (", " + n.toString());
+						}
+						writer.write("@ATTRIBUTE " + "Attribute" + (i.toString()) + str + "}\n");
+						label.setText("Wrote Nominal Attribute...");
+						Attribute a = new Attribute(1);
+						a.setNom(numNomAttrs);
+						attrs.add(a);
+					}
+
+				}
+				Thread.sleep(500);
+				writer.write("\n\n@DATA\n");
+				for (Integer o = 0; o < fileSize; o++) {
+					String h = RandomFileGen.genRow();
+					label.setText("Writing Record Number " + o.toString() + ", At: " + ((Float)(((float)o / (float)fileSize) * 100)).toString() + " %");
+					writer.write(h);
+					WManager.pBar.setValue((int) o);
+				}
+				SysTimeEnd = (double)System.currentTimeMillis();
+				label.setText("Flushing Writer");
+				Thread.sleep(500);
+				Double u = (SysTimeEnd - SysTimeStart) / 1000;
+				label.setText(u.toString());
+				Thread.sleep(1000);
+				System.exit(0);
 			}
-			Thread.sleep(500);
-			writer.write("\n\n@DATA\n");
-			for (Integer o = 0; o < fileSize; o++) {
-				String h = RandomFileGen.genRow();
-				label.setText("Writing Record Number " + o.toString() + ", At: " + ((Float)(((float)o / (float)fileSize) * 100)).toString() + " %");
-				writer.write(h);
-				WManager.pBar.setValue((int) o);
+			else {
+				System.err.println("Error: Not Enough Attributes");
+				Error = true;
 			}
-			SysTimeEnd = (double)System.currentTimeMillis();
-			label.setText("Flushing Writer");
-			Thread.sleep(500);
-			Double u = (SysTimeEnd - SysTimeStart) / 1000;
-			label.setText(u.toString());
-			Thread.sleep(1000);
-			System.exit(0);
 		}
 		else {
 			System.err.println("Error: FileSize Not Large Enough");
+			Error = true;
+		}
+		
+		if (Error = true) {
+			System.err.println(USAGE_STATEMENT);
 		}
 
 	}
