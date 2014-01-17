@@ -21,7 +21,7 @@ public class AlgorithmManager {
 
 	private float[] getColumn(int c) {
 		float[] ra = new float[BigArrayObj.getLength() / attrs];
-		BigArrayObj.get(loc)
+		//BigArrayObj.get(loc)
 		return ra;
 	}
 
