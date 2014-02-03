@@ -59,7 +59,6 @@ public class RandomFileWindowManager {
 		frame.setBounds((sw / 2) - 300, (sh / 2) - 75, 599, 150);
 		frame.setVisible(true);
 		frame.setContentPane(cPane);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		pBar.setVisible(true);
 		pBar.setSize(450, 100);
 		cPane.add(pBar, BorderLayout.CENTER);

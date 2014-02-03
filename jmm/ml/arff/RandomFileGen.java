@@ -12,8 +12,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 import javax.swing.JLabel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import jmm.ui.RandomFileWindowManager;
 
@@ -65,16 +63,6 @@ public abstract class RandomFileGen {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws InterruptedException, IOException {
-		
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException | UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		SysTimeStart = (double)(System.currentTimeMillis());
 
 		RandomFileGen.parseOptsAndArgs(args);
