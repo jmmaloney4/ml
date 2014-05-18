@@ -16,9 +16,9 @@
 
 @implementation MLARFFNominalAttribute
 
-- (instancetype)initWithTypes:(NSArray *)types
+- (instancetype)initWithTypes:(NSArray *)types andName:(NSString *)name
 {
-    self = [super init];
+    self = [super initWithName:name];
     if (self) {
         self.types = types;
         for (int a = 0; a < self.types.count; a++) {

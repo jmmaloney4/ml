@@ -52,21 +52,33 @@
 
                     MLARFFAttribute* at;
 
+                    print(@"%@\n", type);
+
                     if ([type rangeOfString:STRING_ATTRIBUTE_DATATYPE_SPECIFIER].location != NSNotFound) {
                         // IS String type
-                        at = [[MLARFFStringAttribute alloc] init];
+                        at = [[MLARFFStringAttribute alloc] initWithName:attr];
                         [self.attributes addObject:at];
-                        print(@"String");
+                        print(@"String\n");
                     } else if ([type rangeOfString:NOMINAL_ATTRIBUTE_DATATYPE_SPECIFIER].location != NSNotFound) {
                         // IS Nominal Type
-                        at = [[MLARFFNominalAttribute alloc] init];
+
+                        NSString* x = [type copy];
+
+                        x = [x stringByReplacingOccurrencesOfString:@"{" withString:@""];
+                        x = [x stringByReplacingOccurrencesOfString:@"}" withString:@""];
+
+                        print(@"%@\n", x);
+
+                        NSMutableArray* c = [[x componentsSeparatedByString:@","] mutableCopy];
+
+                        at = [[MLARFFNominalAttribute alloc] initWithTypes:c andName:attr];
                         [self.attributes addObject:at];
-                        print(@"Nominal");
+                        print(@"Nominal\n");
                     } else if ([type rangeOfString:NUMERIC_ATTRIBUTE_DATATYPE_SPECIFIER].location != NSNotFound) {
                         // IS Numeric Type
-                        at = [[MLARFFNumericAttribute alloc] init];
+                        at = [[MLARFFNumericAttribute alloc] initWithName:attr];
                         [self.attributes addObject:at];
-                        print(@"Numeric");
+                        print(@"Numeric\n");
                     } else {
                         [NSException raise:@"ARFF File Format Error" format:@"Attribute %@ of type %@ was not able to be identified", attr, type];
                     }

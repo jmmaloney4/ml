@@ -7,6 +7,8 @@ void print(NSString* x, ...) {
 
     printf("%s", [[[NSString alloc] initWithFormat:x arguments:f] UTF8String]);
 
+    fflush(stdout);
+
     va_end(f);
     
 }

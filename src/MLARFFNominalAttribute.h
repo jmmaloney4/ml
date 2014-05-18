@@ -12,6 +12,6 @@
 
 @property (nonatomic, readonly, strong) NSArray* types;
 
--(instancetype) initWithTypes:(NSArray*) types;
+-(instancetype) initWithTypes:(NSArray*) types andName:(NSString*) name;
 
 @end
