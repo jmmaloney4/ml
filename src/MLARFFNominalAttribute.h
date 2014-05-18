@@ -10,6 +10,8 @@
 
 @interface MLARFFNominalAttribute : MLARFFAttribute
 
+@property (nonatomic, readonly, strong) NSArray* types;
 
+-(instancetype) initWithTypes:(NSArray*) types;
 
 @end

@@ -10,6 +10,4 @@
 
 @interface MLARFFStringAttribute : MLARFFAttribute
 
-@property (nonatomic, readonly, strong) NSArray* data;
-
 @end

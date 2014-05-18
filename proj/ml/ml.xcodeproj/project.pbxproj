@@ -36,7 +36,7 @@
 		0405D3301927E37600AE2BDE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0405D3361927E37600AE2BDE /* ml-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ml-Prefix.pch"; sourceTree = "<group>"; };
 		0405D3401927E3C300AE2BDE /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../Makefile; sourceTree = "<group>"; usesTabs = 1; };
-		04B2A1C81927FAC200BB8DCD /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../build/Makefile; sourceTree = "<group>"; };
+		04B2A1C81927FAC200BB8DCD /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../build/Makefile; sourceTree = "<group>"; usesTabs = 1; };
 		04B2A1CA1927FB4B00BB8DCD /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../src/main.m; sourceTree = "<group>"; };
 		04B2A1CB1927FB4B00BB8DCD /* ml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ml.h; path = ../../../src/ml.h; sourceTree = "<group>"; };
 		04B2A1CC1927FB4B00BB8DCD /* ml.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ml.m; path = ../../../src/ml.m; sourceTree = "<group>"; };

@@ -21,6 +21,10 @@ static NSString* NOMINAL_ATTRIBUTE_DATATYPE_SPECIFIER = @"{";
 
 @interface MLARFFAttribute : NSObject
 
-@property (nonatomic, readonly, strong) NSString* name;
+@property (nonatomic, readwrite, strong) NSMutableArray* data;
+@property (nonatomic, readwrite, strong) NSString* name;
+
+-(void) addData:(id) data;
+-(instancetype) initWithName:(NSString*) name;
 
 @end
